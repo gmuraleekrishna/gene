@@ -1,0 +1,5 @@
+<div>
+  <mat-list>
+    <a mat-list-item [href]="'#/person/' + person.id" *ngFor='let person of people; index as i;'> {{ person.firstname }} </a>
+  </mat-list>
+</div>
