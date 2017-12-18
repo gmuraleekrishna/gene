@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/Cellar/node/7.10.0/bin/node /usr/local/bin/yarn upgrade yarn
+  /usr/local/Cellar/node/7.10.0/bin/node /usr/local/bin/yarn install
 
 PATH: 
   /Users/muraleekrishna/.rvm/gems/ruby-2.1.5/bin:/Users/muraleekrishna/.rvm/gems/ruby-2.1.5@global/bin:/Users/muraleekrishna/.rvm/rubies/ruby-2.1.5/bin:/Library/Frameworks/Python.framework/Versions/3.5/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/share/android-sdk/bin:/Users/muraleekrishna/.rvm/bin
@@ -29,29 +29,31 @@ npm manifest:
     "private": true,
     "dependencies": {
       "@angular-devkit/schematics": "0.0.42",
-      "@angular/animations": "^5.0.0",
+      "@angular/animations": "^5.1.1",
       "@angular/cdk": "^5.0.1",
-      "@angular/common": "^5.0.0",
-      "@angular/compiler": "^5.0.0",
-      "@angular/core": "^5.0.0",
-      "@angular/forms": "^5.0.0",
-      "@angular/http": "^5.0.0",
+      "@angular/common": "^5.1.1",
+      "@angular/compiler": "^5.1.1",
+      "@angular/compiler-cli": "^5.1.1",
+      "@angular/core": "^5.1.1",
+      "@angular/forms": "^5.1.1",
+      "@angular/http": "^5.1.1",
       "@angular/material": "^5.0.1",
-      "@angular/platform-browser": "^5.0.0",
-      "@angular/platform-browser-dynamic": "^5.0.0",
-      "@angular/router": "^5.0.0",
+      "@angular/platform-browser": "^5.1.1",
+      "@angular/platform-browser-dynamic": "^5.1.1",
+      "@angular/router": "^5.1.1",
+      "angular": "^1.6.7",
       "angular-material": "^1.1.5",
       "core-js": "^2.4.1",
       "rxjs": "^5.5.2",
       "zone.js": "^0.8.14"
     },
     "devDependencies": {
-      "@angular/cli": "1.5.5",
-      "@angular/compiler-cli": "^5.0.0",
-      "@angular/language-service": "^5.0.0",
+      "@angular/cli": "^1.6.1",
+      "@angular/compiler-cli": "^5.1.1",
+      "@angular/language-service": "^5.1.1",
       "@types/jasmine": "~2.5.53",
       "@types/jasminewd2": "~2.0.2",
-      "@types/node": "~6.0.60",
+      "@types/node": "^6.0.94",
       "codelyzer": "^4.0.1",
       "jasmine-core": "~2.6.2",
       "jasmine-spec-reporter": "~4.1.0",
@@ -91,23 +93,13 @@ Lockfile:
     dependencies:
       source-map "^0.5.6"
   
-  "@angular-devkit/schematics@0.0.42":
+  "@angular-devkit/schematics@0.0.42", "@angular-devkit/schematics@~0.0.38":
     version "0.0.42"
     resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-0.0.42.tgz#34eea7136455545c8abd21edf94a36870a073fea"
     dependencies:
       "@angular-devkit/core" "0.0.22"
       "@ngtools/json-schema" "^1.1.0"
       "@schematics/schematics" "0.0.11"
-      minimist "^1.2.0"
-      rxjs "^5.5.2"
-  
-  "@angular-devkit/schematics@~0.0.38":
-    version "0.0.41"
-    resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-0.0.41.tgz#9a066e442bdf10de4a093d6dd33a58e600d1b101"
-    dependencies:
-      "@angular-devkit/core" "0.0.22"
-      "@ngtools/json-schema" "^1.1.0"
-      "@schematics/schematics" "0.0.10"
       minimist "^1.2.0"
       rxjs "^5.5.2"
   
@@ -276,10 +268,6 @@ Lockfile:
     dependencies:
       "@angular-devkit/core" "0.0.22"
   
-  "@schematics/schematics@0.0.10":
-    version "0.0.10"
-    resolved "https://registry.yarnpkg.com/@schematics/schematics/-/schematics-0.0.10.tgz#b27b49a1a5482dc6c1c93fb3c20371c95874938b"
-  
   "@schematics/schematics@0.0.11":
     version "0.0.11"
     resolved "https://registry.yarnpkg.com/@schematics/schematics/-/schematics-0.0.11.tgz#c8f70f270ed38f29b2873248126fd59abd635862"
@@ -396,6 +384,10 @@ Lockfile:
   angular-material@^1.1.5:
     version "1.1.5"
     resolved "https://registry.yarnpkg.com/angular-material/-/angular-material-1.1.5.tgz#a5450cd8205e15a7691edc389476094cf86d592b"
+  
+  angular@^1.6.7:
+    version "1.6.7"
+    resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.7.tgz#0f89837dae1776b01ccb1fa2096db0d9373d9897"
   
   ansi-html@0.0.7:
     version "0.0.7"
@@ -6137,6 +6129,14 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.18.tgz#8cecb3977fcd1b3090562ff4570e2847e752b48d"
 
 Trace: 
-  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com registry.yarnpkg.com:443
-      at errnoException (dns.js:28:10)
-      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:73:26)
+  Error: https://registry.yarnpkg.com/webpack/-/webpack-3.10.0.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (/usr/local/Cellar/yarn/0.24.5/libexec/lib/yarn-cli.js:108468:19)
+      at Object.onceWrapper (events.js:293:19)
+      at emitNone (events.js:86:13)
+      at ClientRequest.emit (events.js:188:7)
+      at TLSSocket.emitTimeout (_http_client.js:679:10)
+      at Object.onceWrapper (events.js:293:19)
+      at emitNone (events.js:86:13)
+      at TLSSocket.emit (events.js:188:7)
+      at TLSSocket.Socket._onTimeout (net.js:352:8)
+      at ontimeout (timers.js:386:14)

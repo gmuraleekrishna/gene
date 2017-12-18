@@ -1,32 +1,34 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { PeopleService } from './people.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { AppRoutingModule } from './/app-routing.module';
 
-import { MatButtonModule,
-        MatCheckboxModule,
-        MatFormFieldModule,
-        MatOptionModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatInputModule,
-        MatInput,
-        MatCardModule,
-        MatIconModule,
-        MatListModule,
-      } from '@angular/material';
-
-
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatOptionModule,
+  MatSelectModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatInputModule,
+  MatInput,
+  MatCardModule,
+  MatIconModule,
+  MatListModule,
+} from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { AddPersonComponent } from './add-person/add-person.component';
 import { FamilyTreeComponent } from './family-tree/family-tree.component';
 import { PersonalProfileComponent } from './personal-profile/personal-profile.component';
+import { MaleFilterPipe } from './add-person/male-filter.pipe';
+import { FemaleFilterPipe } from './add-person/female-filter.pipe';
 
 
 @NgModule({
@@ -35,12 +37,14 @@ import { PersonalProfileComponent } from './personal-profile/personal-profile.co
     AddPersonComponent,
     FamilyTreeComponent,
     PersonalProfileComponent,
+    MaleFilterPipe,
+    FemaleFilterPipe,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -53,23 +57,7 @@ import { PersonalProfileComponent } from './personal-profile/personal-profile.co
     MatCardModule,
     MatIconModule,
     MatListModule,
-    RouterModule.forRoot([
-      {
-        path: 'person/add',
-        component: AddPersonComponent
-      },
-      {
-        path: 'family-tree',
-        component: FamilyTreeComponent
-      },
-      {
-        path: 'person/:id',
-        component: PersonalProfileComponent
-      },
-    ],
-    {
-      useHash: true
-    })
+    AppRoutingModule,
   ],
   providers: [PeopleService],
   bootstrap: [AppComponent]

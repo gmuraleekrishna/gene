@@ -1,5 +1,17 @@
 <div>
   <mat-list>
-    <a mat-list-item [href]="'#/person/' + person.id" *ngFor='let person of people; index as i;'> {{ person.firstname }} </a>
+    <div mat-list-item *ngFor='let person of people'>
+      <mat-card>
+        <mat-card-title>
+          {{ person.fullName() }}
+        </mat-card-title>
+        <mat-card-actions>
+          <button mat-button mat-raised-button (click)="addChild(person)" *ngIf="person.spouse">Add Child</button>
+        </mat-card-actions>
+        <mat-card-actions *ngIf="!person.spouse">
+            <button mat-button mat-raised-button (click)="addSpouse(person)">Add Spouse</button>
+          </mat-card-actions>
+      </mat-card>
+    </div>
   </mat-list>
 </div>

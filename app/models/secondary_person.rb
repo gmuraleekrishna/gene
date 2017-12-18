@@ -1,0 +1,3 @@
+class SecondaryPerson < ApplicationRecord
+
+end

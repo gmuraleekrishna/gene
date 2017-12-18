@@ -1,22 +1,30 @@
 <div>
-  <form [formGroup]="addPersonForm" (ngSubmit)="createPerson($event)">
+  <form [formGroup]="person" (ngSubmit)="createPerson(person)">
     <mat-card>
-      <mat-card-title>
-        Add a person
-      </mat-card-title>
+      <div [ngSwitch]="personType">
+        <mat-card-title *ngSwitchCase="'spouse'">
+          Add spouse to {{ subject.fullName() }}
+        </mat-card-title>
+        <mat-card-title *ngSwitchCase="'child'">
+          Add a child to {{ subject.fullName() }} and {{ subject.spouse.fullName() }}
+        </mat-card-title>
+        <mat-card-title *ngSwitchDefault>
+          Add a person
+        </mat-card-title>
+      </div>
       <mat-card-content>
         <mat-form-field>
-          <input matInput formControlName="firstname" type="text" placeholder="First name">
+          <input matInput formControlName="firstName" type="text" placeholder="First name">
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput formControlName="lastname" type="text" placeholder="Last name">
+          <input matInput formControlName="lastName" type="text" placeholder="Last name">
         </mat-form-field>
 
         <mat-form-field>
           <mat-select formControlName="gender" placeholder="Gender">
-            <mat-option value="m">Male</mat-option>
-            <mat-option value="f">Female</mat-option>
+            <mat-option value="M">Male</mat-option>
+            <mat-option value="F">Female</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -29,16 +37,14 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Date of Birth">
+          <input matInput [matDatepicker]="picker" formControlName="birth" placeholder="Date of Birth">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
 
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button mat-raised-button color="primary" [disabled]="!addPersonForm.valid" type="submit">Add Person
-          <mat-icon svgIcon="thumbs-up"></mat-icon>
-        </button>
+        <button mat-button mat-raised-button color="primary" [disabled]="person.invalid" type="submit">Save</button>
       </mat-card-actions>
     </mat-card>
   </form>
