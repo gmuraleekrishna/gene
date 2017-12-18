@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AddPersonComponent } from './add-person/add-person.component';
-import { FamilyTreeComponent } from './family-tree/family-tree.component';
+import { PeopleListComponent } from './people-list/people-list.component';
 import { PersonalProfileComponent } from './personal-profile/personal-profile.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/family-tree',
+    redirectTo: '/people-list',
     pathMatch: 'full'
   },
   {
@@ -16,8 +16,8 @@ const routes: Routes = [
     component: AddPersonComponent
   },
   {
-    path: 'family-tree',
-    component: FamilyTreeComponent
+    path: 'people-list',
+    component: PeopleListComponent
   },
   {
     path: 'people/:id',

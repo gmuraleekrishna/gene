@@ -40,8 +40,9 @@ export class AddPersonComponent implements OnInit {
         });
     }
   }
+
   showFamilyTree() {
-    this.router.navigate(['/family-tree']);
+    this.router.navigate(['/people-list']);
   }
 
   createPerson({value, valid}: { value: Person, valid: boolean }) {

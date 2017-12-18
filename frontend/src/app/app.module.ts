@@ -25,20 +25,22 @@ import {
 
 import { AppComponent } from './app.component';
 import { AddPersonComponent } from './add-person/add-person.component';
-import { FamilyTreeComponent } from './family-tree/family-tree.component';
+import { PeopleListComponent } from './people-list/people-list.component';
 import { PersonalProfileComponent } from './personal-profile/personal-profile.component';
 import { MaleFilterPipe } from './add-person/male-filter.pipe';
 import { FemaleFilterPipe } from './add-person/female-filter.pipe';
+import { FamilyTreeComponent } from './family-tree/family-tree.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     AddPersonComponent,
-    FamilyTreeComponent,
+    PeopleListComponent,
     PersonalProfileComponent,
     MaleFilterPipe,
     FemaleFilterPipe,
+    FamilyTreeComponent,
   ],
   imports: [
     BrowserModule,

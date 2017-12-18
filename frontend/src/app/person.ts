@@ -28,7 +28,7 @@ export class Person {
         if (data.spouse) {
             this.spouse = new Person(data.spouse);
         }
-        this.isPrimary = (data.primary == 'true');
+        this.isPrimary = data.primary;
     }
 
     public toApiObject() {

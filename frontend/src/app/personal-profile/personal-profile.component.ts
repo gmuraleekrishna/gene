@@ -11,7 +11,7 @@ import { PeopleService } from '../people.service';
 export class PersonalProfileComponent implements OnInit {
   public person: Person;
 
-  constructor( private peopleService: PeopleService,  private acRoute: ActivatedRoute) { }
+  constructor(private peopleService: PeopleService, private acRoute: ActivatedRoute) { }
 
   ngOnInit() {
     const id = this.acRoute.snapshot.paramMap.get('id')
