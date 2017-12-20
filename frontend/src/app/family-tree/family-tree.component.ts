@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { GraphObject, Diagram, Adornment, Node, Spot, Placeholder, Shape, Geometry, Panel, Link, Binding, Size, TextBlock, GraphLinksModel, LayeredDigraphLayout, Group, Point } from 'gojs';
+import { PeopleService } from '../people.service';
+import { Person } from '../person';
+
 
 @Component({
   selector: 'app-family-tree',
@@ -6,10 +10,543 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./family-tree.component.css']
 })
 export class FamilyTreeComponent implements OnInit {
+  myDiagram: Diagram;
+  people: Person[];
 
-  constructor() { }
+  constructor(private peopleService: PeopleService) { }
 
   ngOnInit() {
+    this.peopleService.getAll().subscribe((people: Person[]) => {
+      this.people = people;
+      let treeMap = this.people.map(person => {
+        return {
+          key: person.id,
+          n: person.fullName(),
+          s: person.gender,
+          m: person.father ? person.father.id : null,
+          f: person.mother ? person.mother.id : null,
+          ux: person.spouse ? person.spouse.id : [],
+          a: ["C", "F", "K"]
+        }
+      });
+      this.initGeneogram(treeMap);
+    });
   }
 
+  femaleGeometry(a) {
+    var tlarc = Geometry.parse("F M20 20 B 180 90 20 20 19 19 z");
+    var trarc = Geometry.parse("F M20 20 B 270 90 20 20 19 19 z");
+    var brarc = Geometry.parse("F M20 20 B 0 90 20 20 19 19 z");
+    var blarc = Geometry.parse("F M20 20 B 90 90 20 20 19 19 z");
+    var slash = Geometry.parse("F M38 0 L40 0 40 2 2 40 0 40 0 38z");
+
+    switch (a) {
+      case "A": return tlarc;
+      case "B": return tlarc;
+      case "C": return tlarc;
+      case "D": return trarc;
+      case "E": return trarc;
+      case "F": return trarc;
+      case "G": return brarc;
+      case "H": return brarc;
+      case "I": return brarc;
+      case "J": return blarc;
+      case "K": return blarc;
+      case "L": return blarc;
+      case "S": return slash;
+      default: return tlarc;
+    }
+  }
+
+
+  maleGeometry(a) {
+    var tlsq = Geometry.parse("F M1 1 l19 0 0 19 -19 0z");
+    var trsq = Geometry.parse("F M20 1 l19 0 0 19 -19 0z");
+    var brsq = Geometry.parse("F M20 20 l19 0 0 19 -19 0z");
+    var blsq = Geometry.parse("F M1 20 l19 0 0 19 -19 0z");
+    var slash = Geometry.parse("F M38 0 L40 0 40 2 2 40 0 40 0 38z");
+    switch (a) {
+      case "A": return tlsq;
+      case "B": return tlsq;
+      case "C": return tlsq;
+      case "D": return trsq;
+      case "E": return trsq;
+      case "F": return trsq;
+      case "G": return brsq;
+      case "H": return brsq;
+      case "I": return brsq;
+      case "J": return blsq;
+      case "K": return blsq;
+      case "L": return blsq;
+      case "S": return slash;
+      default: return tlsq;
+    }
+  }
+
+  initGeneogram(treeMap) {
+    var $ = GraphObject.make;
+    this.myDiagram =
+      $(Diagram, "familyTree",
+        {
+          initialAutoScale: Diagram.Uniform,
+          initialContentAlignment: Spot.Center,
+          "undoManager.isEnabled": true,
+          // when a node is selected, draw a big yellow circle behind it
+          nodeSelectionAdornmentTemplate:
+            $(Adornment, "Auto",
+              { layerName: "Grid" },  // the predefined layer that is behind everything else
+              $(Shape, "Circle", { fill: "yellow", stroke: null }),
+              $(Placeholder)
+            ),
+          layout:  // use a custom layout, defined below
+            $(GenogramLayout, { direction: 90, layerSpacing: 30, columnSpacing: 10 })
+        });
+
+    // determine the color for each attribute shape
+
+
+    // determine the geometry for each attribute shape in a male;
+    // except for the slash these are all squares at each of the four corners of the overall square
+
+
+    // determine the geometry for each attribute shape in a female;
+    // except for the slash these are all pie shapes at each of the four quadrants of the overall circle
+
+
+
+    // two different node templates, one for each sex,
+    // named by the category value in the node data object
+    this.myDiagram.nodeTemplateMap.add("M",  // male
+      $(Node, "Vertical",
+        { locationSpot: Spot.Center, locationObjectName: "ICON" },
+        $(Panel,
+          { name: "ICON" },
+          $(Shape, "Square",
+            { width: 40, height: 40, strokeWidth: 2, fill: "white", portId: "" }),
+          $(Panel,
+            { // for each attribute show a Shape at a particular place in the overall square
+              itemTemplate:
+                $(Panel,
+                  $(Shape,
+                    { stroke: null, strokeWidth: 0 },
+                    new Binding("fill", "blue"),
+                    new Binding("geometry", "", this.maleGeometry))
+                ),
+              margin: 1
+            },
+            new Binding("itemArray", "a")
+          )
+        ),
+        $(TextBlock,
+          { textAlign: "center", maxSize: new Size(80, NaN) },
+          new Binding("text", "n"))
+      ));
+    this.myDiagram.nodeTemplateMap.add("F",  // female
+      $(Node, "Vertical",
+        { locationSpot: Spot.Center, locationObjectName: "ICON" },
+        $(Panel,
+          { name: "ICON" },
+          $(Shape, "Circle",
+            { width: 40, height: 40, strokeWidth: 2, fill: "white", portId: "" }),
+          $(Panel,
+            { // for each attribute show a Shape at a particular place in the overall circle
+              itemTemplate:
+                $(Panel,
+                  $(Shape,
+                    { stroke: null, strokeWidth: 0 },
+                    new Binding("fill", "pink"),
+                    new Binding("geometry", "", this.femaleGeometry))
+                ),
+              margin: 1
+            },
+            new Binding("itemArray", "a")
+          )
+        ),
+        $(TextBlock,
+          { textAlign: "center", maxSize: new Size(80, NaN) },
+          new Binding("text", "n"))
+      ));
+
+    // the representation of each label node -- nothing shows on a Marriage Link
+    this.myDiagram.nodeTemplateMap.add("LinkLabel",
+      $(Node, { selectable: false, width: 1, height: 1, fromEndSegmentLength: 20 }));
+
+
+    this.myDiagram.linkTemplate =  // for parent-child relationships
+      $(Link,
+        {
+          routing: Link.Orthogonal, curviness: 15,
+          layerName: "Background", selectable: false,
+          fromSpot: Spot.Bottom, toSpot: Spot.Top
+        },
+        $(Shape, { strokeWidth: 2 })
+      );
+
+    this.myDiagram.linkTemplateMap.add("Marriage",  // for marriage relationships
+      $(Link,
+        { selectable: false },
+        $(Shape, { strokeWidth: 2, stroke: "blue" })
+      ));
+
+
+    // n: name, s: sex, m: mother, f: father, ux: wife, vir: husband, a: attributes/markers
+    this.setupDiagram(this.myDiagram, treeMap, 4);
+  }
+
+
+  // create and initialize the Diagram.model given an array of node data representing people
+  setupDiagram(diagram, array, focusId) {
+    diagram.model =
+      GraphObject.make(GraphLinksModel,
+        { // declare support for link label nodes
+          linkLabelKeysProperty: "labelKeys",
+          // this property determines which template is used
+          nodeCategoryProperty: "s",
+          // create all of the nodes for people
+          nodeDataArray: array
+        });
+    this.setupMarriages(diagram);
+    this.setupParents(diagram);
+
+    var node = diagram.findNodeForKey(focusId);
+    if (node !== null) {
+      diagram.select(node);
+      // remove any spouse for the person under focus:
+      //node.linksConnected.each(function(l) {
+      //  if (!l.isLabeledLink) return;
+      //  l.opacity = 0;
+      //  var spouse = l.getOtherNode(node);
+      //  spouse.opacity = 0;
+      //  spouse.pickable = false;
+      //});
+    }
+  }
+
+  findMarriage(diagram, a, b) {  // A and B are node keys
+    var nodeA = diagram.findNodeForKey(a);
+    var nodeB = diagram.findNodeForKey(b);
+    if (nodeA !== null && nodeB !== null) {
+      var it = nodeA.findLinksBetween(nodeB);  // in either direction
+      while (it.next()) {
+        var link = it.value;
+        // Link.data.category === "Marriage" means it's a marriage relationship
+        if (link.data !== null && link.data.category === "Marriage") return link;
+      }
+    }
+    return null;
+  }
+
+  // now process the node data to determine marriages
+  setupMarriages(diagram) {
+    var model = diagram.model;
+    var nodeDataArray = model.nodeDataArray;
+    for (var i = 0; i < nodeDataArray.length; i++) {
+      var data = nodeDataArray[i];
+      var key = data.key;
+      var uxs = data.ux;
+      if (uxs !== undefined) {
+        if (typeof uxs === "number") uxs = [uxs];
+        for (var j = 0; j < uxs.length; j++) {
+          var wife = uxs[j];
+          if (key === wife) {
+            // or warn no reflexive marriages
+            continue;
+          }
+          var link = this.findMarriage(diagram, key, wife);
+          if (link === null) {
+            // add a label node for the marriage link
+            var mlab = { s: "LinkLabel" };
+            model.addNodeData(mlab);
+            // add the marriage link itself, also referring to the label node
+            var mdata = { from: key, to: wife, labelKeys: [mlab.key], category: "Marriage" };
+            model.addLinkData(mdata);
+          }
+        }
+      }
+      var virs = data.vir;
+      if (virs !== undefined) {
+        if (typeof virs === "number") virs = [virs];
+        for (var j = 0; j < virs.length; j++) {
+          var husband = virs[j];
+          if (key === husband) {
+            // or warn no reflexive marriages
+            continue;
+          }
+          var link = this.findMarriage(diagram, key, husband);
+          if (link === null) {
+            // add a label node for the marriage link
+            let mlab = { s: "LinkLabel" };
+            model.addNodeData(mlab);
+            // add the marriage link itself, also referring to the label node
+            let mdata = { from: key, to: husband, labelKeys: [mlab.key], category: "Marriage" };
+            model.addLinkData(mdata);
+          }
+        }
+      }
+    }
+  }
+
+  // process parent-child relationships once all marriages are known
+  setupParents(diagram) {
+    let model = diagram.model;
+    let nodeDataArray = model.nodeDataArray;
+    for (let i = 0; i < nodeDataArray.length; i++) {
+      let data = nodeDataArray[i];
+      let key = data.key;
+      let mother = data.m;
+      let father = data.f;
+      if (mother !== undefined && father !== undefined) {
+        let link = this.findMarriage(diagram, mother, father);
+        if (link === null) {
+          // or warn no known mother or no known father or no known marriage between them
+          if (window.console) window.console.log("unknown marriage: " + mother + " & " + father);
+          continue;
+        }
+        let mdata = link.data;
+        let mlabkey = mdata.labelKeys[0];
+        let cdata = { from: mlabkey, to: key };
+        diagram.model.addLinkData(cdata);
+      }
+    }
+  }
+};
+
+
+// A custom layout that shows the two families related to a person's parents
+class GenogramLayout extends LayeredDigraphLayout {
+  spouseSpacing: number;
+
+  constructor() {
+    super();
+    this.initializeOption = LayeredDigraphLayout.InitDepthFirstIn;
+    Diagram.inherit(GenogramLayout, LayeredDigraphLayout);
+    this.spouseSpacing = 30;  // minimum space between spouses
+  }
+
+  makeNetwork(coll) {
+    // generate LayoutEdges for each parent-child Link
+    let net = this.createNetwork();
+    if (coll instanceof Diagram) {
+      this.add(net, coll.nodes, true);
+      this.add(net, coll.links, true);
+    } else if (coll instanceof Group) {
+      this.add(net, coll.memberParts, false);
+    } else if (coll.iterator) {
+      this.add(net, coll.iterator, false);
+    }
+    return net;
+  };
+
+  // internal method for creating LayeredDigraphNetwork where husband/wife pairs are represented
+  // by a single LayeredDigraphVertex corresponding to the label Node on the marriage Link
+  add(net, coll, nonmemberonly) {
+    var multiSpousePeople = new Set();
+    // consider all Nodes in the given collection
+    let it = coll.iterator;
+    while (it.next()) {
+      var node = it.value;
+      if (!(node instanceof Node)) continue;
+
+      if (!node.isLayoutPositioned || !node.isVisible()) continue;
+      if (nonmemberonly && node.containingGroup !== null) continue;
+      // if it's an unmarried Node, or if it's a Link Label Node, create a LayoutVertex for it
+      if (node.isLinkLabel) {
+        // get marriage Link
+        var link = node.labeledLink;
+        var spouseA = link.fromNode;
+        var spouseB = link.toNode;
+        // create vertex representing both husband and wife
+        var vertex = net.addNode(node);
+        // now define the vertex size to be big enough to hold both spouses
+        vertex.width = spouseA.actualBounds.width + this.spouseSpacing + spouseB.actualBounds.width;
+        vertex.height = Math.max(spouseA.actualBounds.height, spouseB.actualBounds.height);
+        vertex.focus = new Point(spouseA.actualBounds.width + this.spouseSpacing / 2, vertex.height / 2);
+      } else {
+        // don't add a vertex for any married person!
+        // instead, code above adds label node for marriage link
+        // assume a marriage Link has a label Node
+        var marriages = 0;
+        node.linksConnected.each(function (l) { if (l.isLabeledLink) marriages++; });
+        if (marriages === 0) {
+          var vertex = net.addNode(node);
+        } else if (marriages > 1) {
+          multiSpousePeople.add(node);
+        }
+      }
+    }
+    // now do all Links
+    it.reset();
+    while (it.next()) {
+      let link = it.value;
+      if (!(link instanceof Link)) continue;
+      if (!link.isLayoutPositioned || !link.isVisible()) continue;
+      if (nonmemberonly && link.containingGroup !== null) continue;
+      // if it's a parent-child link, add a LayoutEdge for it
+      if (!link.isLabeledLink) {
+        var parent = net.findVertex(link.fromNode);  // should be a label node
+        var child = net.findVertex(link.toNode);
+        if (child !== null) {  // an unmarried child
+          net.linkVertexes(parent, child, link);
+        } else {  // a married child
+          link.toNode.linksConnected.each(function (l) {
+            if (!l.isLabeledLink) return;  // if it has no label node, it's a parent-child link
+            // found the Marriage Link, now get its label Node
+            var mlab = l.labelNodes.first();
+            // parent-child link should connect with the label node,
+            // so the LayoutEdge should connect with the LayoutVertex representing the label node
+            var mlabvert = net.findVertex(mlab);
+            if (mlabvert !== null) {
+              net.linkVertexes(parent, mlabvert, link);
+            }
+          });
+        }
+      }
+    }
+
+    while (multiSpousePeople.size > 0) {
+      // find all collections of people that are indirectly married to each other
+      var node = multiSpousePeople[0];
+      var cohort = new Set();
+      cohort = this.extendCohort(cohort, node);
+      // then encourage them all to be the same generation by connecting them all with a common vertex
+      var dummyvert = net.createVertex();
+      net.addVertex(dummyvert);
+      let marriages = new Set();
+      cohort.forEach((n) => {
+        n.linksConnected.forEach((l) => {
+          marriages.add(l);
+        })
+      });
+      marriages.forEach((link) => {
+        // find the vertex for the marriage link (i.e. for the label node)
+        const mlab = link.labelNodes.first()
+        const v = net.findVertex(mlab);
+        if (v !== null) {
+          net.linkVertexes(dummyvert, v, null);
+        }
+      });
+      // done with these people, now see if there are any other multiple-married people
+      multiSpousePeople.delete(cohort);
+    }
+  };
+
+  // collect all of the people indirectly married with a person
+  extendCohort(coll, node) {
+    if (coll.contains(node)) return;
+    coll.add(node);
+    var lay = this;
+    node.linksConnected.each((l) => {
+      if (l.isLabeledLink) {  // if it's a marriage link, continue with both spouses
+        lay.extendCohort(coll, l.fromNode);
+        lay.extendCohort(coll, l.toNode);
+      }
+    });
+    return coll;
+  };
+
+  /** @override */
+  assignLayers() {
+    LayeredDigraphLayout.prototype.assignLayers.call(this);
+    var horiz = this.direction == 0.0 || this.direction == 180.0;
+    // for every vertex, record the maximum vertex width or height for the vertex's layer
+    var maxsizes = [];
+    this.network.vertexes.each((v) => {
+
+      var lay = v.layer;
+      var max = maxsizes[lay];
+      if (max === undefined) max = 0;
+      var sz = (horiz ? v.width : v.height);
+      if (sz > max) maxsizes[lay] = sz;
+    });
+    // now make sure every vertex has the maximum width or height according to which layer it is in,
+    // and aligned on the left (if horizontal) or the top (if vertical)
+    this.network.vertexes.each(function (v) {
+      var lay = v.layer;
+      var max = maxsizes[lay];
+      if (horiz) {
+        v.focus = new Point(0, v.height / 2);
+        v.width = max;
+      } else {
+        v.focus = new Point(v.width / 2, 0);
+        v.height = max;
+      }
+    });
+    // from now on, the LayeredDigraphLayout will think that the Node is bigger than it really is
+    // (other than the ones that are the widest or tallest in their respective layer).
+  };
+
+  /** @override */
+  commitNodes() {
+    LayeredDigraphLayout.prototype.commitNodes.call(this);
+    // position regular nodes
+    this.network.vertexes.each(function (v) {
+      if (v.node !== null && !v.node.isLinkLabel) {
+        v.node.position = new Point(v.x, v.y);
+      }
+    });
+    // position the spouses of each marriage vertex
+    var layout = this;
+    this.network.vertexes.each(function (v) {
+      if (v.node === null) return;
+      if (!v.node.isLinkLabel) return;
+      var labnode = v.node;
+      var lablink = labnode.labeledLink;
+      // In case the spouses are not actually moved, we need to have the marriage link
+      // position the label node, because LayoutVertex.commit() was called above on these vertexes.
+      // Alternatively we could override LayoutVetex.commit to be a no-op for label node vertexes.
+      lablink.invalidateRoute();
+      var spouseA = lablink.fromNode;
+      var spouseB = lablink.toNode;
+      // prefer fathers on the left, mothers on the right
+      if (spouseA.data.s === "F") {  // sex is female
+        var temp = spouseA;
+        spouseA = spouseB;
+        spouseB = temp;
+      }
+      // see if the parents are on the desired sides, to avoid a link crossing
+      var aParentsNode = layout.findParentsMarriageLabelNode(spouseA);
+      var bParentsNode = layout.findParentsMarriageLabelNode(spouseB);
+      if (aParentsNode !== null && bParentsNode !== null && aParentsNode.position.x > bParentsNode.position.x) {
+        // swap the spouses
+        var temp = spouseA;
+        spouseA = spouseB;
+        spouseB = temp;
+      }
+      spouseA.position = new Point(v.x, v.y);
+      spouseB.position = new Point(v.x + spouseA.actualBounds.width + layout.spouseSpacing, v.y);
+      if (spouseA.opacity === 0) {
+        var pos = new Point(v.centerX - spouseA.actualBounds.width / 2, v.y);
+        spouseA.position = pos;
+        spouseB.position = pos;
+      } else if (spouseB.opacity === 0) {
+        var pos = new Point(v.centerX - spouseB.actualBounds.width / 2, v.y);
+        spouseA.position = pos;
+        spouseB.position = pos;
+      }
+    });
+    // position only-child nodes to be under the marriage label node
+    this.network.vertexes.each(function (v) {
+      if (v.node === null || v.node.linksConnected.count > 1) return;
+      var mnode = layout.findParentsMarriageLabelNode(v.node);
+      if (mnode !== null && mnode.linksConnected.count === 1) {  // if only one child
+        var mvert = layout.network.findVertex(mnode);
+        var newbnds = v.node.actualBounds.copy();
+        newbnds.x = mvert.centerX - v.node.actualBounds.width / 2;
+        // see if there's any empty space at the horizontal mid-point in that layer
+        var overlaps = layout.diagram.findObjectsIn(newbnds, function (x) { return x.part; }, function (p) { return p !== v.node; }, true);
+        if (overlaps.count === 0) {
+          v.node.move(newbnds.position);
+        }
+      }
+    });
+  };
+
+  findParentsMarriageLabelNode(node) {
+    var it = node.findNodesInto();
+    while (it.next()) {
+      var n = it.value;
+      if (n.isLinkLabel) return n;
+    }
+    return null;
+  };
 }

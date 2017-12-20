@@ -50,9 +50,9 @@ export class AddPersonComponent implements OnInit {
     if(this.personType === 'child') {
       this.peopleService.addChild(this.subject.id, person).subscribe(() => this.showFamilyTree());
     } else if (this.personType === 'spouse') {
-      this.peopleService.addSpouse(this.subject.id, person).subscribe(() => this.showFamilyTree());;
+      this.peopleService.addSpouse(this.subject.id, person).subscribe(() => this.showFamilyTree());
     } else {
-      this.peopleService.create(person);
+      this.peopleService.create(person).subscribe(() => this.showFamilyTree());
     }
   }
 }

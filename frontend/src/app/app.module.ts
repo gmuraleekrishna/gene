@@ -6,7 +6,7 @@ import { PeopleService } from './people.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { AppRoutingModule } from './/app-routing.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
   MatButtonModule,
@@ -23,6 +23,7 @@ import {
   MatListModule,
 } from '@angular/material';
 
+import { AppRoutingModule } from './/app-routing.module';
 import { AppComponent } from './app.component';
 import { AddPersonComponent } from './add-person/add-person.component';
 import { PeopleListComponent } from './people-list/people-list.component';
@@ -30,6 +31,7 @@ import { PersonalProfileComponent } from './personal-profile/personal-profile.co
 import { MaleFilterPipe } from './add-person/male-filter.pipe';
 import { FemaleFilterPipe } from './add-person/female-filter.pipe';
 import { FamilyTreeComponent } from './family-tree/family-tree.component';
+import { EditPersonComponent } from './edit-person/edit-person.component';
 
 
 @NgModule({
@@ -41,6 +43,7 @@ import { FamilyTreeComponent } from './family-tree/family-tree.component';
     MaleFilterPipe,
     FemaleFilterPipe,
     FamilyTreeComponent,
+    EditPersonComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,7 @@ import { FamilyTreeComponent } from './family-tree/family-tree.component';
     MatCardModule,
     MatIconModule,
     MatListModule,
+    NgbModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [PeopleService],

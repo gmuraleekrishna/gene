@@ -4,11 +4,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { AddPersonComponent } from './add-person/add-person.component';
 import { PeopleListComponent } from './people-list/people-list.component';
 import { PersonalProfileComponent } from './personal-profile/personal-profile.component';
+import { FamilyTreeComponent } from './family-tree/family-tree.component';
+import { EditPersonComponent } from './edit-person/edit-person.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/people-list',
+    redirectTo: 'people-list',
     pathMatch: 'full'
   },
   {
@@ -31,6 +33,14 @@ const routes: Routes = [
     path: 'people/:id/spouse',
     component: AddPersonComponent
   },
+  {
+    path: 'people/:id/edit',
+    component: EditPersonComponent,
+  },
+  {
+    path: 'family-tree',
+    component: FamilyTreeComponent
+  }
 ];
 
 @NgModule({

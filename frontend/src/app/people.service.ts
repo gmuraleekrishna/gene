@@ -14,6 +14,10 @@ export class PeopleService {
     return this.http.post('http://localhost:3000/people', person.toApiObject())
   }
 
+  edit(person: Person) {
+    return this.http.put(`http://localhost:3000/people/${person.id}`, person.toApiObject());
+  }
+
   addChild(id: string, person: Person) {
     return this.http.put(`http://localhost:3000/people/${id}/child`, person.toApiObject())
   }
