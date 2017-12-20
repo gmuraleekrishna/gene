@@ -13,4 +13,8 @@
 !/log/.keep
 !/tmp/.keep
 
+frontend/node_modules
+client/dist
+client/node_modules
 .byebug_history
+.DStore
