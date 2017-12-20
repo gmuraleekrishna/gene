@@ -18,7 +18,7 @@
     "build.dev.watch": "ng build --watch",
     "build.e2e": "gulp build.e2e --color",
     "build.prod": "ng build --target=production",
-    "postinstall": "yarn install && npm prune && ng build --target=production",
+    "postinstall": "ng build --target=production",
     "reinstall": "npm cache clean && npm install",
     "pree2e": "webdriver-manager update",
     "preinstall": "npm install -g node-gyp",
