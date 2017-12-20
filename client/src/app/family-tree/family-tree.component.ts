@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GraphObject, Diagram, Adornment, Node, Spot, Placeholder, Shape, Geometry, Panel, Link, Binding, Size, TextBlock, GraphLinksModel, LayeredDigraphLayout, Group, Point } from 'gojs';
+import { GraphObject, Diagram, Adornment, Node, Spot, Placeholder, Shape, Geometry, Panel, Link, Binding, Size, TextBlock, GraphLinksModel, LayeredDigraphLayout, Group, Point, LayoutVertex } from 'gojs';
 import { PeopleService } from '../people.service';
 import { Person } from '../person';
 
@@ -255,7 +255,7 @@ export class FamilyTreeComponent implements OnInit {
           var link = this.findMarriage(diagram, key, wife);
           if (link === null) {
             // add a label node for the marriage link
-            var mlab = { s: "LinkLabel" };
+            var mlab = { s: "LinkLabel", key: 0 };
             model.addNodeData(mlab);
             // add the marriage link itself, also referring to the label node
             var mdata = { from: key, to: wife, labelKeys: [mlab.key], category: "Marriage" };
@@ -275,7 +275,7 @@ export class FamilyTreeComponent implements OnInit {
           var link = this.findMarriage(diagram, key, husband);
           if (link === null) {
             // add a label node for the marriage link
-            let mlab = { s: "LinkLabel" };
+            let mlab = { s: "LinkLabel", key: 0 };
             model.addNodeData(mlab);
             // add the marriage link itself, also referring to the label node
             let mdata = { from: key, to: husband, labelKeys: [mlab.key], category: "Marriage" };
@@ -451,8 +451,7 @@ class GenogramLayout extends LayeredDigraphLayout {
     // for every vertex, record the maximum vertex width or height for the vertex's layer
     var maxsizes = [];
     this.network.vertexes.each((v) => {
-
-      var lay = v.layer;
+      var lay = (v as any).layer;
       var max = maxsizes[lay];
       if (max === undefined) max = 0;
       var sz = (horiz ? v.width : v.height);
@@ -460,8 +459,8 @@ class GenogramLayout extends LayeredDigraphLayout {
     });
     // now make sure every vertex has the maximum width or height according to which layer it is in,
     // and aligned on the left (if horizontal) or the top (if vertical)
-    this.network.vertexes.each(function (v) {
-      var lay = v.layer;
+    this.network.vertexes.each((v: LayoutVertex) => {
+      var lay = (v as any).layer;
       var max = maxsizes[lay];
       if (horiz) {
         v.focus = new Point(0, v.height / 2);
