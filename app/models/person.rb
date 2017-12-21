@@ -20,9 +20,9 @@ class Person < ApplicationRecord
     @child.primary = true
     child_hash = @child.as_json.except('ancestry')
     if primary?
-      self.children.create(child_hash)
+      self.children.create!(child_hash)
     else
-      self.spouse.create(child_hash)
+      self.spouse.children.create!(child_hash)
     end
   end
 
