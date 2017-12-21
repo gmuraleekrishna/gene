@@ -11,24 +11,24 @@ export class PeopleService {
   constructor(public http: HttpClient) { }
 
   create(person: Person) {
-    return this.http.post('http://localhost:3000/people', person.toApiObject())
+    return this.http.post('/people', person.toApiObject())
   }
 
   edit(person: Person) {
-    return this.http.put(`http://localhost:3000/people/${person.id}`, person.toApiObject());
+    return this.http.put(`/people/${person.id}`, person.toApiObject());
   }
 
   addChild(id: string, person: Person) {
-    return this.http.put(`http://localhost:3000/people/${id}/child`, person.toApiObject())
+    return this.http.put(`/people/${id}/child`, person.toApiObject())
   }
 
   addSpouse(id: string, person: Person) {
-    return this.http.put(`http://localhost:3000/people/${id}/spouse`, person.toApiObject())
+    return this.http.put(`/people/${id}/spouse`, person.toApiObject())
   }
 
   getAll(): Observable<{}> {
     const getAllObservable = new Observable((observer) => {
-      this.http.get<Person[]>('http://localhost:3000/people.json')
+      this.http.get<Person[]>('/people.json')
         .subscribe(data => {
           const people = data.map((person: Person) => new Person(person))
           observer.next(people)
@@ -40,7 +40,7 @@ export class PeopleService {
 
   get(id: string): Observable<{}> {
     const getObservable = new Observable((observer) => {
-      return this.http.get<Person>(`http://localhost:3000/people/${id}.json`)
+      return this.http.get<Person>(`/people/${id}.json`)
         .subscribe(data => {
           const personObject = new Person(data);
           observer.next(personObject)
